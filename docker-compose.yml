@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  wildfly:
+    container_name: wildfly
+    build:
+        context: .
+        dockerfile: Dockerfile
+    ports:
+      - ${PORT}:${PORT}
+      - 2222:2222
+    volumes:
+      - ./home:/home
+    environment:
+      - PORT=$PORT
