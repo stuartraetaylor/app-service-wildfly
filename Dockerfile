@@ -4,7 +4,7 @@
 ### when used on Azure. For more information about Azul on Azure: 
 ### https://docs.microsoft.com/en-us/java/azure/jdk/
 
-FROM mcr.microsoft.com/java/jre-headless:8u212-zulu-alpine-with-tools
+FROM mcr.microsoft.com/java/jre-headless:8u242-zulu-alpine-with-tools
 
 LABEL maintainer="Stuart Taylor"
 
