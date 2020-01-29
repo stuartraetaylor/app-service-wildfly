@@ -6,8 +6,10 @@
 
 FROM mcr.microsoft.com/java/jre-headless:8u212-zulu-alpine-with-tools
 
-LABEL maintainer="<your-name>"
+LABEL maintainer="Stuart Taylor"
 
+ENV WILDFLY_VERSION 15.0.1.Final
+ENV WILDFLY_SHA1 23d6a5889b76702fc518600fc5b2d80d6b3b7bb1
 ENV JBOSS_HOME /opt/jboss/wildfly
 
 ENV PORT 80
@@ -37,13 +39,15 @@ RUN apk add --update openssh-server bash openrc \
         # Set username and password for SSH
         && echo "root:Docker!" | chpasswd \
         # Allow access to the container entrypoint
-        && chmod 755 /bin/init_container.sh \
-        # Download and unpack Wildfly 14
-        && wget -O /tmp/wildfly-14.0.1.Final.tar.gz https://download.jboss.org/wildfly/14.0.1.Final/wildfly-14.0.1.Final.tar.gz \
-        && tar xvzf /tmp/wildfly-14.0.1.Final.tar.gz -C /tmp \
+        && chmod 755 /bin/init_container.sh
+
+# Download and unpack Wildfly
+RUN wget -O /tmp/wildfly-$WILDFLY_VERSION.tar.gz https://download.jboss.org/wildfly/$WILDFLY_VERSION/wildfly-$WILDFLY_VERSION.tar.gz \
+        && sha1sum /tmp/wildfly-$WILDFLY_VERSION.tar.gz | grep $WILDFLY_SHA1 \
+        && tar xvzf /tmp/wildfly-$WILDFLY_VERSION.tar.gz -C /tmp \
         && mkdir -p `dirname $JBOSS_HOME` \
         # Copy core Wildfly and the standalone configuration  
-        && mv /tmp/wildfly-14.0.1.Final $JBOSS_HOME \
+        && mv /tmp/wildfly-$WILDFLY_VERSION $JBOSS_HOME \
         && mv /tmp/wildfly/standalone-full.xml $JBOSS_HOME/standalone/configuration/standalone-full.xml
 
 # Ensure signals are forwarded to the JVM process correctly for graceful shutdown
